@@ -1,8 +1,8 @@
-import com.zezzi.eventzezziapp.data.networking.MealsApi
+package com.zezzi.eventzezziapp.data.networking
+
 import com.zezzi.eventzezziapp.data.networking.response.MealsCategoriesResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
 
 
 class MealsWebService {
