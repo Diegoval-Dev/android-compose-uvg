@@ -1,139 +1,110 @@
 package com.zezzi.eventzezziapp.ui.meals.view
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material3.Divider
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import com.zezzi.eventzezziapp.data.networking.response.MealResponse
+import coil.compose.AsyncImage
 import com.zezzi.eventzezziapp.navigation.AppBar
+import com.zezzi.eventzezziapp.navigation.NavigationState
 
-
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MealsCategoriesScreen(
     navController: NavController,
     viewModel: MealsCategoriesViewModel = viewModel()
 ) {
-    val rememberedMeals: MutableState<List<MealResponse>> =
-        remember { mutableStateOf(emptyList<MealResponse>()) }
-
-    LaunchedEffect(key1 = Unit) {
-        try {
-            val response = viewModel.getMeals()
-            rememberedMeals.value = response?.categories.orEmpty()
-        } catch (e: Exception) {
-            null
-        }
+    if (viewModel.categoryUiState.categories.isEmpty()) {
+        viewModel.getMeals()
     }
 
     Scaffold(
         topBar = {
-            AppBar(title = "Meals categories", navController = navController)
+            AppBar(title = "Categories", navController = navController)
         }
     ) {
-        MealList(meals = rememberedMeals)
+        if (viewModel.categoryUiState.loading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = it,
+                modifier = Modifier
+                    .background(Color.Gray)
+            ) {
+                items(viewModel.categoryUiState.categories) { meal ->
+                    Card(
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = 2.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .background(Color.Gray),
+                        onClick = {
+                            navController.navigate("${NavigationState.RecipesScreen.route}/${meal.name}")
+                        }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Categorie",
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp)
+                            )
 
-    }
-
-}
-
-@Composable
-fun MealList(meals: MutableState<List<MealResponse>>) {
-    val mealList = meals.value
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.LightGray)
-            .padding(10.dp)
-    ) {
-        mealList.forEach { meal ->
-            MealCard(meal = meal)
+                            Text(
+                                text = meal.name,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            )
+                            AsyncImage(
+                                model = meal.imageUrl,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
-}
-
-@Composable
-fun MealCard(meal: MealResponse) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(15.dp)
-            .shadow(
-                elevation = 5.dp,
-                shape = RoundedCornerShape(10.dp),
-            ),
-        shape = RoundedCornerShape(10.dp),
-        color = Color.White
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            MealImage(imageUrl = meal.imageUrl)
-            MealDetails(meal = meal)
-        }
-    }
-}
-
-@Composable
-fun MealImage(imageUrl: String) {
-    Image(
-        painter = rememberAsyncImagePainter(model = imageUrl),
-        contentDescription = null,
-        modifier = Modifier.size(95.dp)
-    )
-}
-
-@Composable
-fun MealDetails(meal: MealResponse) {
-    Column(
-        modifier = Modifier
-            .padding(start = 12.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = "Category Name:",
-            modifier = Modifier.padding(top = 2.dp),
-            style = TextStyle(fontSize = 15.sp),
-            fontWeight = FontWeight.Bold
-        )
-
-        Text(
-            text = meal.name,
-            modifier = Modifier.padding(top = 2.dp),
-            style = TextStyle(fontSize = 15.sp)
-        )
-    }
-
 }
