@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,7 +57,7 @@ fun MealsCategoriesScreen(
 
     Scaffold(
         topBar = {
-            AppBar(title = "Recipies", navController = navController)
+            AppBar(title = "Meals categories", navController = navController)
         }
     ) {
         MealList(meals = rememberedMeals)
@@ -121,21 +123,14 @@ fun MealDetails(meal: MealResponse) {
             .fillMaxWidth()
     ) {
         Text(
-            text = "Category Name",
+            text = "Category Name:",
             modifier = Modifier.padding(top = 2.dp),
-            style = TextStyle(fontSize = 15.sp)
+            style = TextStyle(fontSize = 15.sp),
+            fontWeight = FontWeight.Bold
         )
 
         Text(
             text = meal.name,
-            modifier = Modifier.padding(top = 2.dp),
-            style = TextStyle(fontSize = 15.sp)
-        )
-
-        Divider(color = Color.Gray)
-
-        Text(
-            text = "Date 10 Month 8 day",
             modifier = Modifier.padding(top = 2.dp),
             style = TextStyle(fontSize = 15.sp)
         )
