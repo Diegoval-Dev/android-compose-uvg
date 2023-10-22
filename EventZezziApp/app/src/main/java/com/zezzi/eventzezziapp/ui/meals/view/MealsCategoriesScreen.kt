@@ -68,7 +68,7 @@ fun MealsCategoriesScreen(
                 contentPadding = it,
                 modifier = Modifier
                     .background(Color.Gray)
-                    .padding(10.dp)
+                    .padding(start = 10.dp, end = 10.dp)
             ) {
                 items(viewModel.categoryUiState.categories) { meal ->
                     Card(
@@ -98,7 +98,7 @@ fun MealsCategoriesScreen(
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.Start
                             ) {
                                 Row(
                                     modifier = Modifier
@@ -137,10 +137,10 @@ fun MealsCategoriesScreen(
                                 )
                                 Text(
                                     text = meal.description,
-                                    textAlign = TextAlign.Center,
+                                    textAlign = TextAlign.Start,
                                     modifier = Modifier
-                                        .padding(top = 5.dp, start = 5.dp),
-                                    lineHeight = 2.sp
+                                        .padding(top = 5.dp, start = 1.dp),
+                                    lineHeight = 15.sp
                                 )
                             }
                         }

@@ -1,8 +1,11 @@
 package com.zezzi.eventzezziapp.ui.recipies
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -66,6 +69,7 @@ fun MealsScreen(
                 contentPadding = it,
                 modifier = Modifier
                     .background(Color.Gray)
+                    .padding(start = 10.dp, end = 10.dp)
             ) {
                 items(viewModel.recipesUiState.recipes){ recipe ->
                     Card(
@@ -76,37 +80,42 @@ fun MealsScreen(
                             .padding(top = 16.dp)
                             .background(Color.Gray),
                         onClick = {
-
+                            navController.navigate("${NavigationState.FoodScreen.route}/${recipe.meal}")
                         }
                     ){
-                        Column(
-                            modifier = Modifier
-                                .padding(1.dp)
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Name",
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Text(
-                                text = recipe.meal,
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ){
                             AsyncImage(
                                 model = recipe.imageUrl,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .height(50.dp)
-                                    .width(50.dp),
+                                    .padding(start = 10.dp, top = 10.dp, bottom = 10.dp, end = 2.dp)
+                                    .width(110.dp)
+                                    .height(150.dp),
                                 placeholder = painterResource(R.drawable.placeholderimage)
                             )
+                            Column(
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .height(160.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Name",
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = recipe.meal,
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+
+                            }
                         }
                     }
                 }
