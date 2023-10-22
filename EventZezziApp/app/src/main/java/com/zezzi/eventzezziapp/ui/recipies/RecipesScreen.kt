@@ -1,9 +1,11 @@
-package com.zezzi.eventzezziapp.ui.meals.view
+package com.zezzi.eventzezziapp.ui.recipies
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,7 +20,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -29,30 +30,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.zezzi.eventzezziapp.R
 import com.zezzi.eventzezziapp.navigation.AppBar
 import com.zezzi.eventzezziapp.navigation.NavigationState
+import com.zezzi.eventzezziapp.ui.meals.view.MealsCategoriesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun MealsCategoriesScreen(
+fun MealsScreen(
     navController: NavController,
-    viewModel: MealsCategoriesViewModel = viewModel()
+    category: String,
+    viewModel: RecipesViewModel = viewModel()
 ) {
-    if (viewModel.categoryUiState.categories.isEmpty()) {
-        viewModel.getMeals()
+    if(viewModel.recipesUiState.recipes.isEmpty()){
+        viewModel.getRecipes(category)
     }
-
     Scaffold(
         topBar = {
-            AppBar(title = "Categories", navController = navController)
+            AppBar(title = "Meals for $category", navController = navController)
         }
     ) {
-        if (viewModel.categoryUiState.loading) {
+        if(viewModel.recipesUiState.loading){
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -62,7 +63,7 @@ fun MealsCategoriesScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-        } else {
+        }else{
             LazyVerticalGrid(
                 columns = GridCells.Fixed(1),
                 contentPadding = it,
@@ -70,7 +71,7 @@ fun MealsCategoriesScreen(
                     .background(Color.Gray)
                     .padding(start = 10.dp, end = 10.dp)
             ) {
-                items(viewModel.categoryUiState.categories) { meal ->
+                items(viewModel.recipesUiState.recipes){ recipe ->
                     Card(
                         shape = RoundedCornerShape(8.dp),
                         elevation = 2.dp,
@@ -79,14 +80,14 @@ fun MealsCategoriesScreen(
                             .padding(top = 16.dp)
                             .background(Color.Gray),
                         onClick = {
-                            navController.navigate("${NavigationState.RecipesScreen.route}/${meal.name}")
+                            navController.navigate("${NavigationState.FoodScreen.route}/${recipe.meal}")
                         }
-                    ) {
+                    ){
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ){
                             AsyncImage(
-                                model = meal.imageUrl,
+                                model = recipe.imageUrl,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .padding(start = 10.dp, top = 10.dp, bottom = 10.dp, end = 2.dp)
@@ -96,52 +97,24 @@ fun MealsCategoriesScreen(
                             )
                             Column(
                                 modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.Start
+                                    .padding(1.dp)
+                                    .height(160.dp),
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                ){
-                                    Text(
-                                        text = "Categorie:",
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier
-                                            .padding(top = 5.dp),
-                                        lineHeight = 2.sp
-                                    )
-                                    Text(
-                                        text = meal.name,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .padding(top = 5.dp, start = 5.dp),
-                                        lineHeight = 2.sp
-                                    )
-                                }
-                                Divider(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 1.dp),
-                                    color = Color.Black,
-                                    thickness = 1.dp
-                                )
                                 Text(
-                                    text = "Description:",
+                                    text = "Name",
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
                                     textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .padding(top = 5.dp),
-                                    lineHeight = 2.sp
+                                    fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = meal.description,
-                                    textAlign = TextAlign.Start,
+                                    text = recipe.meal,
                                     modifier = Modifier
-                                        .padding(top = 5.dp, start = 1.dp),
-                                    lineHeight = 15.sp
+                                        .fillMaxWidth(),
+                                    textAlign = TextAlign.Center
                                 )
+
                             }
                         }
                     }

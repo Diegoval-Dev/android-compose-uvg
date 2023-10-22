@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.zezzi.eventzezziapp"
-        minSdk = 34
+        minSdk = 33
         //noinspection EditedTargetSdkVersion
         targetSdk = 34
         versionCode = 1
@@ -71,6 +71,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    //https
 
 
     testImplementation("junit:junit:4.13.2")
